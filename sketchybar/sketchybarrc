@@ -1,0 +1,298 @@
+#!/bin/bash
+
+# ===== Color Scheme =====
+export BG0=0xff2c2e34
+export BG1=0xff363944
+export BG2=0xff414550
+export WHITE=0xffe2e2e3
+export GREY=0xff7f8490
+export BLACK=0xff181819
+export RED=0xfffc5d7c
+export GREEN=0xff9ed072
+export BLUE=0xff76cce0
+export YELLOW=0xffe7c664
+export ORANGE=0xfff39660
+
+# ===== Bar Configuration =====
+sketchybar --bar \
+  height=40 \
+  position=top \
+  margin=10 \
+  y_offset=8 \
+  padding_left=2 \
+  padding_right=2 \
+  corner_radius=9 \
+  blur_radius=50 \
+  color=$BG0 \
+  topmost=on
+
+# ===== Default Settings =====
+sketchybar --default \
+  updates=when_shown \
+  icon.font="SF Pro:Bold:20.0" \
+  icon.color=$WHITE \
+  icon.padding_left=3 \
+  icon.padding_right=3 \
+  label.font="SF Pro:Semibold:20.0" \
+  label.color=$WHITE \
+  label.padding_left=3 \
+  label.padding_right=3 \
+  padding_left=5 \
+  padding_right=5 \
+  background.height=28 \
+  background.corner_radius=9 \
+  background.border_width=2 \
+  background.border_color=$BG2
+
+# ===== LEFT SIDE =====
+
+# Padding
+sketchybar --add item left_padding left \
+           --set left_padding width=5
+
+# Apple Icon
+sketchybar --add item apple left \
+           --set apple \
+           icon="" \
+           icon.font="SF Pro:Bold:20.0" \
+           icon.padding_right=8 \
+           icon.padding_left=8 \
+           label.drawing=off \
+           icon.color=$YELLOW \
+           background.color=$BG2 \
+           background.border_color=$BLACK \
+           background.border_width=1 \
+           padding_left=1 \
+           padding_right=1
+
+# Apple bracket (double border)
+sketchybar --add bracket apple_bracket apple \
+           --set apple_bracket \
+           background.color=0x00000000 \
+           background.height=30 \
+           background.border_color=$GREY
+
+# Padding after apple
+sketchybar --add item apple_padding left \
+           --set apple_padding width=7
+
+# Register aerospace workspace change event
+sketchybar --add event aerospace_workspace_change
+
+# Workspaces (4 spaces)
+for i in {1..4}; do
+  sketchybar --add item space.$i left \
+             --subscribe space.$i aerospace_workspace_change \
+             --set space.$i \
+             icon=$i \
+             icon.font="SF Mono:Bold:20.0" \
+             icon.padding_left=15 \
+             icon.padding_right=8 \
+             icon.color=$WHITE \
+             icon.highlight_color=$BLUE \
+             label.font="sketchybar-app-font:Regular:20.0" \
+             label.padding_right=20 \
+             label.color=$GREY \
+             label.highlight_color=$WHITE \
+             label.y_offset=-1 \
+             label=" —" \
+             padding_right=1 \
+             padding_left=1 \
+             background.color=$BG1 \
+             background.border_width=1 \
+             background.height=26 \
+             background.border_color=$BG1 \
+             script="$HOME/.config/sketchybar/plugins/aerospace.sh $i"
+
+  # Double border bracket
+  sketchybar --add bracket space_bracket.$i space.$i \
+             --set space_bracket.$i \
+             background.color=0x00000000 \
+             background.border_color=$BG2 \
+             background.height=28 \
+             background.border_width=2
+
+  # Padding between spaces
+  sketchybar --add item space_padding.$i left \
+             --set space_padding.$i width=5
+done
+
+# ===== CENTER =====
+
+# Front App (current application name)
+sketchybar --add item front_app center \
+           --set front_app \
+           icon.drawing=off \
+           label.font="SF Pro:Black:14.0" \
+           label="Unknown" \
+           updates=on \
+           script="$HOME/.config/sketchybar/plugins/front_app.sh" \
+           --subscribe front_app front_app_switched
+
+# ===== RIGHT SIDE =====
+
+# Padding
+sketchybar --add item right_padding right \
+           --set right_padding width=5
+
+# Calendar (date and time)
+sketchybar --add item calendar right \
+           --set calendar \
+           update_freq=30 \
+           icon.color=$WHITE \
+           icon.padding_left=8 \
+           icon.font="SF Pro:Black:16.0" \
+           label.color=$WHITE \
+           label.padding_right=8 \
+           label.width=80 \
+           label.align=right \
+           label.font="SF Mono:Bold:16.0" \
+           padding_left=1 \
+           padding_right=1 \
+           background.color=$BG1 \
+           background.border_color=$BG2 \
+           background.border_width=1 \
+           script="$HOME/.config/sketchybar/plugins/calendar.sh"
+
+# Calendar bracket
+sketchybar --add bracket calendar_bracket calendar \
+           --set calendar_bracket \
+           background.color=0x00000000 \
+           background.height=30 \
+           background.border_color=$BG2
+
+# Padding
+sketchybar --add item cal_padding right \
+           --set cal_padding width=5
+
+# Battery
+sketchybar --add item battery right \
+           --set battery \
+           update_freq=30 \
+           icon.font="SF Pro:Regular:19.0" \
+           label.font="SF Mono:Bold:16.0" \
+           script="$HOME/.config/sketchybar/plugins/battery.sh" \
+           --subscribe battery system_woke power_source_change
+
+# Battery bracket
+sketchybar --add bracket battery_bracket battery \
+           --set battery_bracket \
+           background.color=$BG1
+
+# Padding
+sketchybar --add item battery_padding right \
+           --set battery_padding width=5
+
+# Volume
+# --- VOLUME ---
+sketchybar --add item volume right \
+           --set volume \
+           script="$HOME/.config/sketchybar/plugins/volume.sh" \
+           updates=on \
+           icon.font="SF Pro:Bold:14.0" \
+           label.font="SF Pro:Bold:14.0" \
+           label.drawing=on \
+           popup.align=right \
+           --subscribe volume volume_change mouse.clicked mouse.scrolled
+
+# --- VOLUME SLIDER (Im Popup) ---
+sketchybar --add slider volume.slider popup.volume \
+           --set volume.slider \
+           background.height=6 \
+           background.corner_radius=3 \
+           background.color=0xff313244 \
+           knob.drawing=on \
+           knob="􀀁" \
+           script="$HOME/.config/sketchybar/plugins/volume.sh" \
+           click_script="$HOME/.config/sketchybar/plugins/volume.sh"
+
+sketchybar --add bracket volume_bracket volume \
+           --set volume_bracket \
+           background.color=$BG1
+# Padding
+sketchybar --add item volume_padding right \
+           --set volume_padding width=5
+
+# --- WIFI ---
+sketchybar --add item wifi right \
+           --set wifi \
+           script="$HOME/.config/sketchybar/plugins/wifi.sh" \
+           icon.font="$FONT_SF" \
+           label.font="SF Pro:Bold:12.0" \
+           icon=􀙇 \
+           label="Wi-Fi" \
+           updates=on \
+           popup.align=right \
+           --subscribe wifi wifi_change mouse.clicked mouse.exited.global
+
+# --- WIFI POPUP ITEMS ---
+# IP Adresse
+sketchybar --add item wifi.ip popup.wifi \
+           --set wifi.ip \
+           icon="􀆪" \
+           icon.font="$FONT_SF" \
+           label="Loading..." \
+           label.font="$FONT_TEXT" \
+           click_script="$HOME/.config/sketchybar/plugins/wifi.sh" \
+           background.padding_left=10 \
+           background.padding_right=10
+
+sketchybar --add bracket wifi_bracket wifi \
+           --set wifi_bracket \
+           background.color=$BG1
+
+sketchybar --add item wifi_padding right \
+           --set wifi_padding width=5
+
+# Router
+sketchybar --add item wifi.router popup.wifi \
+           --set wifi.router \
+           icon="􀌁" \
+           icon.font="$FONT_SF" \
+           label="Loading..." \
+           label.font="$FONT_TEXT" \
+           click_script="$HOME/.config/sketchybar/plugins/wifi.sh" \
+           background.padding_left=10 \
+           background.padding_right=10
+
+# Subnet Mask
+sketchybar --add item wifi.mask popup.wifi \
+           --set wifi.mask \
+           icon="Subnet:" \
+           icon.font="$FONT_TEXT" \
+           label="Loading..." \
+           label.font="$FONT_TEXT" \
+           click_script="$HOME/.config/sketchybar/plugins/wifi.sh" \
+           background.padding_left=10 \
+           background.padding_right=10
+
+# CPU Graph
+sketchybar --add graph cpu right 42 \
+           --set cpu \
+           graph.color=$BLUE \
+           background.height=22 \
+           background.color=0x00000000 \
+           background.border_color=0x00000000 \
+           label="cpu ??%" \
+           label.font="SF Mono:Bold:14.0" \
+           label.align=right \
+           label.padding_right=0 \
+           label.width=18 \
+           label.y_offset=4 \
+           padding_right=9 \
+           update_freq=2 \
+           script="$HOME/.config/sketchybar/plugins/cpu.sh"
+
+# CPU bracket
+sketchybar --add bracket cpu_bracket cpu \
+           --set cpu_bracket \
+           background.color=$BG1
+
+# Padding
+sketchybar --add item cpu_padding right \
+           --set cpu_padding width=5
+
+# ===== Finalize =====
+sketchybar --update
+
+echo "SketchyBar configuration loaded successfully"

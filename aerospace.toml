@@ -1,0 +1,82 @@
+# AeroSpace Configuration - Hyprland Style
+config-version = 2
+
+# This ensures AeroSpace runs automatically after a restart
+start-at-login = true
+
+# Tiling behavior matching Hyprland dwindle
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Start Sketchybar and Jankyborders on startup
+after-startup-command = [
+    'exec-and-forget sketchybar',
+    'exec-and-forget borders active_color=0xffb4befe inactive_color=0xff595959 width=6.0 hidpi=on style=rounded'
+]
+
+# Notify SketchyBar about workspace changes
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
+
+[gaps]
+inner.horizontal = 7
+inner.vertical   = 7
+outer.left       = 14
+outer.bottom     = 14
+outer.top        = 60
+outer.right      = 14
+
+[mode.main.binding]
+# --- Applications (Using alt/option to avoid system conflicts) ---
+alt-t = 'exec-and-forget open -a kitty'
+alt-b = 'exec-and-forget open -a Zen'
+alt-e = 'exec-and-forget open -a Finder'
+alt-o = 'exec-and-forget open -a Obsidian'
+alt-w = 'exec-and-forget open -a Stremio'
+
+# --- Window Management ---
+alt-q = 'close'
+alt-f = 'fullscreen'
+alt-v = 'layout floating tiling'
+alt-p = 'layout tiles'
+alt-j = 'layout h_accordion'
+
+# --- Focus Control ---
+alt-left = 'focus left'
+alt-right = 'focus right'
+alt-up = 'focus up'
+alt-down = 'focus down'
+
+# --- Workspaces ---
+cmd-ctrl-1 = 'workspace 1'
+cmd-ctrl-2 = 'workspace 2'
+cmd-ctrl-3 = 'workspace 3'
+cmd-ctrl-4 = 'workspace 4'
+cmd-ctrl-5 = 'workspace 5'
+cmd-ctrl-6 = 'workspace 6'
+cmd-ctrl-7 = 'workspace 7'
+cmd-ctrl-8 = 'workspace 8'
+
+# --- Move Windows ---
+cmd-ctrl-shift-1 = 'move-node-to-workspace 1'
+cmd-ctrl-shift-2 = 'move-node-to-workspace 2'
+cmd-ctrl-shift-3 = 'move-node-to-workspace 3'
+cmd-ctrl-shift-4 = 'move-node-to-workspace 4'
+cmd-ctrl-shift-5 = 'move-node-to-workspace 5'
+cmd-ctrl-shift-6 = 'move-node-to-workspace 6'
+cmd-ctrl-shift-7 = 'move-node-to-workspace 7'
+cmd-ctrl-shift-8 = 'move-node-to-workspace 8'
+
+alt-r = 'mode resize'
+
+[mode.resize.binding]
+h = 'resize width -50'
+j = 'resize height +50'
+k = 'resize height -50'
+l = 'resize width +50'
+enter = 'mode main'
+esc = 'mode main'
+
+[[on-window-detected]]
+run = 'layout tiling'
